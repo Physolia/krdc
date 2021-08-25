@@ -6,6 +6,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include "config-kactivities.h"
+
 #include "mainwindow.h"
 #include "krdc_debug.h"
 #include "remoteview.h"
@@ -31,6 +33,10 @@
 #include <KToggleAction>
 #include <KToggleFullScreenAction>
 #include <KToolBar>
+
+#ifdef HAVE_KACTIVITIES
+#include <KActivities/ResourceInstance>
+#endif
 
 #include <QClipboard>
 #include <QDockWidget>
@@ -311,6 +317,10 @@ void MainWindow::newConnection(const QUrl &newUrl, bool switchFullscreenWhenConn
 
     view->start();
     setFactor(view->hostPreferences()->scaleFactor());
+
+#ifdef HAVE_KACTIVITIES
+    KActivities::ResourceInstance::notifyAccessed(url, QGuiApplication::desktopFileName());
+#endif
 
     Q_EMIT factorUpdated(view->hostPreferences()->scaleFactor());
     Q_EMIT scaleUpdated(scale_state);
